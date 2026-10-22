@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart Fish Drying Prototype</title>
+<style>
+:root{--navy:#0B4A8F;--green:#2E9E4F;--gbg:#E8F5EC;--rbg:#FBE9E9;--abg:#FFF3E0;--ink:#13233A;--mut:#6B7A90;--bg:#F8FAFC;--card:#fff;--line:#E3E9F0;--page:#E9EEF4;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#E8EEF6;--mut:#9AA8BC;--bg:#0F1724;--card:#17212F;--line:#26334A;--page:#0A0F18;--gbg:#14301F;--rbg:#3A1A1C;--abg:#3A2C14;--navy:#2F7BD0;color-scheme:dark}}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--page);color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:14px;padding:max(12px,env(safe-area-inset-top)) 12px max(12px,env(safe-area-inset-bottom))}
+nav.pills{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:430px}
+nav.pills button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:20px;padding:5px 11px;font-size:12px;cursor:pointer}
+nav.pills button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.phone{width:390px;max-width:100%;height:min(780px,calc(100vh - 110px));min-height:600px;background:var(--bg);border:8px solid #111;border-radius:40px;overflow:hidden;position:relative;display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column;overflow:auto;min-height:0}
+.screen.on{display:flex}
+.sb{display:flex;justify-content:space-between;padding:12px 22px 4px;font-size:12px;font-weight:600}
+.body{flex:1;padding:8px 18px 14px;display:flex;flex-direction:column;gap:12px}
+.center{align-items:center;text-align:center}
+h1{font-size:26px;font-weight:700}h2{font-size:19px;font-weight:700}
+.sub{font-size:12px;color:var(--mut)}
+.btn{background:var(--navy);color:#fff;border:0;border-radius:10px;padding:14px;font-size:15px;font-weight:600;width:100%;cursor:pointer}
+.btn.o{background:var(--card);color:var(--navy);border:1px solid var(--line)}
+.link{color:var(--navy);font-weight:600;font-size:12px;cursor:pointer;background:none;border:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.hero{background:var(--green);color:#fff;border-radius:14px;padding:16px;display:flex;gap:14px;align-items:center}
+.hero .tick{width:54px;height:54px;border-radius:50%;background:#fff;color:var(--green);display:grid;place-items:center;font-size:28px;font-weight:700}
+.hero b{font-size:22px;display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.s{display:flex;gap:10px;align-items:center;cursor:pointer}
+.s i{font-style:normal;font-size:24px}.s small{display:block;font-size:11px;color:var(--mut)}.s b{font-size:15px}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;flex:1}.bar span{display:block;height:100%;background:var(--navy);width:60%}
+.row{display:flex;align-items:center;gap:10px}
+.chip{margin-left:auto;background:var(--gbg);color:var(--green);font-size:11px;padding:3px 9px;border-radius:12px}
+.big{font-size:22px;font-weight:700}
+.tabs{display:flex;background:var(--line);border-radius:8px;padding:3px}
+.tabs button{flex:1;border:0;background:none;color:var(--ink);padding:7px;border-radius:6px;font-size:12px;cursor:pointer}
+.tabs button.on{background:var(--navy);color:#fff}
+.alert{border-radius:14px;padding:12px;font-size:13px;display:flex;flex-direction:column;gap:6px;cursor:pointer}
+.alert b{font-size:14px}.alert small{color:var(--mut);font-size:11px}
+.set{display:flex;gap:12px;align-items:center;padding:13px 4px;border-bottom:1px solid var(--line);font-size:14px;cursor:pointer}
+.set span:last-child{margin-left:auto;color:var(--mut)}
+input{width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:13px;font-size:14px}
+.top{display:flex;align-items:center;gap:10px;padding:6px 18px}.top button{background:none;border:0;font-size:20px;color:var(--ink);cursor:pointer}
+.tb{display:flex;justify-content:space-around;border-top:1px solid var(--line);background:var(--card);padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px))}
+.tb button{background:none;border:0;color:var(--mut);font-size:10px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+.tb button i{font-style:normal;font-size:19px}.tb button.on{color:var(--navy);font-weight:700}
+.hero-img{height:220px;background:linear-gradient(#bfe0f3,#6fa8c8 55%,#8a6a4a 56%,#c9ad8a);border-radius:0 0 0 0;margin:0 -18px}
+svg text{fill:var(--mut);font-size:10px}
+.sw{width:44px;height:26px;border-radius:14px;background:var(--line);position:relative;cursor:pointer;margin-left:auto;flex:none}.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .15s}.sw.on{background:var(--green)}.sw.on::after{left:21px}
+.box{width:22px;height:22px;border:2px solid var(--line);border-radius:6px;flex:none;display:grid;place-items:center;font-size:14px;font-style:normal;color:#fff}.ck{cursor:pointer}.ck.done .box{background:var(--green);border-color:var(--green)}.ck.done .box::after{content:"✓"}.ck.done div{color:var(--mut);text-decoration:line-through}
+.faq{cursor:pointer}.faq .a{display:none;font-size:12px;color:var(--mut)}.faq.open .a{display:block}
+.toast{position:absolute;left:50%;bottom:84px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:20px;font-size:12px;z-index:5}
+</style>
+</head>
+<body>
+<nav class="pills" id="pills"></nav>
+<div class="phone" id="phone"></div>
+<script>
+const N=['Splash','Login','Home','Live Data','AI Prediction','Alerts','Settings'];
+const logo='<svg width="76" height="64" viewBox="0 0 76 64" fill="none" stroke="#0B4A8F" stroke-width="4" stroke-linecap="round"><path d="M26 10a18 18 0 0 1 24 0M32 17a10 10 0 0 1 12 0"/><path d="M8 40c10-14 30-16 44-4l14-8v24l-14-8C38 56 18 54 8 40z" fill="#0B4A8F"/><circle cx="22" cy="38" r="2.5" fill="#fff" stroke="none"/></svg>';
+const tab=a=>`<div class="tb">${[['Home','⌂'],['Alerts','🔔'],['Settings','⚙']].map(t=>`<button class="${t[0]==a?'on':''}" data-go="${t[0]}"><i>${t[1]}</i>${t[0]}</button>`).join('')}</div>`;
+const sb='<div class="sb"><span>9:41</span><span>▂▄▆ ●</span></div>';
+const back=(t,sub)=>`<div class="top"><button data-go="${sub||'Home'}" aria-label="Back">←</button><h2>${t}</h2></div>`;
+const chart=(t,c,pts,max)=>`<div><b style="font-size:13px">${t}</b><svg viewBox="0 0 330 110" width="100%"><g stroke="var(--line)">${[10,40,70,100].map(y=>`<line x1="28" x2="326" y1="${y}" y2="${y}"/>`).join('')}</g><polyline fill="none" stroke="${c}" stroke-width="2" points="${pts}"/><text x="0" y="14">${max}</text><text x="0" y="104">0</text></svg></div>`;
+const scene=`<svg viewBox="0 0 390 230" preserveAspectRatio="xMidYMid slice" style="width:100%;height:230px;flex:none;display:block" role="img" aria-label="Fish drying on wooden racks by the sea"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE8F7"/><stop offset="1" stop-color="#F6E7C8"/></linearGradient><linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--bg)"/><stop offset="1" style="stop-color:var(--bg);stop-opacity:0"/></linearGradient></defs><rect width="390" height="150" fill="url(#sky)"/><circle cx="312" cy="62" r="22" fill="#FFE3A3"/><path d="M0 124L70 92L140 118L220 86L300 116L390 98V140H0Z" fill="#7FA3B8" opacity=".75"/><rect y="122" width="390" height="34" fill="#4F8FB5"/><path d="M20 134q10-4 20 0t20 0M150 142q10-4 20 0t20 0M290 132q10-4 20 0t20 0" stroke="#A9D0E6" stroke-width="2" fill="none"/><rect y="156" width="390" height="74" fill="#C9AD8A"/><g stroke="#6B4A2F" stroke-width="7" stroke-linecap="round"><path d="M40 128V218M140 128V218M240 128V218M340 128V218"/></g><g stroke="#8A6240" stroke-width="6" stroke-linecap="round"><path d="M30 156H352M30 191H352"/></g>${[158,193].map(y=>[...Array(11)].map((_,i)=>{const x=48+i*28;return `<ellipse cx="${x}" cy="${y}" rx="11" ry="4.5" fill="#DCE1E6"/><path d="M${x+10} ${y}l7-5v10z" fill="#C3CBD3"/>`}).join('')).join('')}<rect width="390" height="70" fill="url(#fade)"/></svg>`;
+const ck=t=>`<div class="set ck"><i class="box"></i><div style="color:var(--ink);font-size:14px">${t}</div></div>`;
+const S={
+Splash:`${sb}<div class="body center" style="padding-top:30px">${logo}<h1>Smart Fish Drying</h1><div class="sub">Monitor · Predict · Protect</div><div class="sub" style="margin-top:8px">Helping fisherfolk reduce<br>post-harvest losses.</div></div>${scene}<div class="body center" style="flex:none"><button class="btn" data-go="Login">Get Started</button><div class="sub">Already have an account? <button class="link" data-go="Login">Log In</button></div></div>`,
+Login:`${sb}<div class="body center" style="padding-top:36px">${logo}<h2>Smart Fish Drying</h2><div class="sub" style="margin-bottom:14px">Monitor · Predict · Protect</div><input placeholder="Email or Phone Number" aria-label="Email or phone"><input type="password" placeholder="Password" aria-label="Password"><button class="btn" data-go="Home">Log In</button><button class="link">Forgot Password?</button><div class="sub">or</div><button class="btn o">Create Account</button></div>`,
+Home:`${sb}<div class="body"><div class="row"><div><div class="sub" style="font-size:15px;color:var(--ink)">Good day,</div><h2>Fisherfolk! 👋</h2><div class="sub">📍 Barangay Pasil, Cebu City</div></div><button class="link" data-go="Alerts" style="margin-left:auto;font-size:20px">🔔</button></div>
+<div class="hero"><div class="tick">✓</div><div><span style="font-size:12px;opacity:.9">Drying Conditions</span><b>Favorable</b><span style="font-size:11px;opacity:.9">Temperature and humidity are within the ideal range.</span></div></div>
+<div class="card s" data-go="AI Prediction" style="display:block"><div class="sub">Drying Status (AI Prediction) ›</div><div class="row" style="margin-top:8px"><span style="font-size:26px">🐟</span><b style="font-size:17px">Partially Dry</b></div><div class="row" style="margin-top:8px"><div class="bar"><span></span></div><b style="font-size:12px">60%</b></div></div>
+<div class="grid">${[['🌡️','Temperature','32.4°C'],['💧','Humidity','68%'],['🌧️','Rainfall','No Rain'],['⛅','Weather','Partly Cloudy']].map(x=>`<div class="card s" data-go="Live Data"><i>${x[0]}</i><div><small>${x[1]}</small><b>${x[2]}</b></div></div>`).join('')}</div></div>${tab('Home')}`,
+'Live Data':`${sb}${back('Live Data')}<div class="body"><div class="sub" style="color:var(--green);margin-top:-8px">● Connected</div>${[['🌡️','Temperature','32.4°C'],['💧','Humidity','68%'],['🌧️','Rainfall','No Rain'],['⛅','Weather','Partly Cloudy']].map(x=>`<div class="card row"><span style="font-size:30px">${x[0]}</span><div><small class="sub">${x[1]}</small><div class="big">${x[2]}</div></div><span class="chip">Normal</span></div>`).join('')}<div class="card row sub">📶 <div>Last updated<br>Aug 16, 2026 9:41 AM</div></div></div>`,
+'AI Prediction':`${sb}${back('AI Prediction')}<div class="body"><div class="card row"><span style="font-size:30px">🐟</span><div style="flex:1"><b style="font-size:17px">Partially Dry</b><div class="row"><div class="bar"><span></span></div><b style="font-size:12px">60%</b></div></div></div><h2 style="font-size:16px">Prediction Details</h2><div class="sub" style="font-size:13px">Based on the current temperature, humidity, and weather conditions, the fish is estimated to be partially dry.</div><div class="card" style="background:var(--gbg);border-color:transparent"><b style="color:var(--green);font-size:13px">💡 Recommended Action</b><div class="sub" style="margin-top:6px">Continue monitoring. Conditions are still good for drying.</div></div><button class="btn" data-go="Guide" style="margin-top:auto">View Drying Guide</button></div>${tab('Home')}`,
+Alerts:`${sb}<div class="top"><h2>🔔 Alerts</h2></div><div class="body"><div class="alert" style="background:var(--rbg)"><b>🌧️ Rain Detected</b><small>Today, 8:12 AM</small>Rain has been detected in your area. Please cover the fish or activate the protective cover.</div><div class="alert" style="background:var(--abg)"><b>☀️ High Humidity</b><small>Today, 6:45 AM</small>Humidity is 92%. Drying may be slower than expected.</div><div class="alert" style="background:var(--gbg)"><b>✅ System Normal</b><small>Aug 15, 2026, 5:20 PM</small>All conditions are within the ideal range.</div></div>${tab('Alerts')}`,
+Settings:`${sb}<div class="top"><h2>Settings</h2></div><div class="body"><div class="card row"><span style="font-size:30px">👤</span><div><b>Fisherfolk User</b><div class="sub">fisherfolk@example.com</div></div></div>${[['📍','Farm / Drying Location'],['🔔','Notification Settings'],['⚙️','Device Settings'],['ℹ️','About the App'],['❓','Help & Support']].map((x,i)=>`<div class="set" data-go="${['Location','Notifications','Device','About','Help'][i]}"><span>${x[0]}</span><span style="color:var(--ink)">${x[1]}</span><span>›</span></div>`).join('')}<button class="btn o" data-go="Login" style="margin-top:auto">Log Out</button></div>${tab('Settings')}`};
+const tg=(l,on)=>`<div class="set"><span style="color:var(--ink)">${l}</span><div class="sw ${on?'on':''}" role="switch" tabindex="0"></div></div>`;
+const fq=(q,a)=>`<div class="card faq"><b style="font-size:13px">${q} ▾</b><div class="a" style="margin-top:6px">${a}</div></div>`;
+const SUB={
+Location:`${sb}${back('Farm / Drying Location','Settings')}<div class="body"><div class="sub">Where your drying racks are. Weather and alerts follow this place.</div><input value="Barangay Pasil" aria-label="Barangay"><input value="Cebu City" aria-label="City"><button class="btn" data-save="Location saved" style="margin-top:auto">Save changes</button></div>${tab('Settings')}`,
+Notifications:`${sb}${back('Notification Settings','Settings')}<div class="body">${tg('Rain alerts',1)}${tg('High humidity alerts',1)}${tg('Drying complete',1)}${tg('System status updates',0)}${tg('Sound and vibration',1)}<button class="btn" data-save="Notification settings saved" style="margin-top:auto">Save changes</button></div>${tab('Settings')}`,
+Device:`${sb}${back('Device Settings','Settings')}<div class="body"><div class="card row"><span style="font-size:28px">📟</span><div><b>Drying Rack Sensor</b><div class="sub" style="color:var(--green)">● Connected</div></div></div><div class="card sub">Last synced<div id="ls" style="color:var(--ink);font-size:16px;font-weight:700">Aug 16, 2026 9:41 AM</div></div><button class="btn o" id="sync">Sync now</button>${tg('Auto sync every 15 minutes',1)}<div class="sub">Temperature unit</div><div class="tabs"><button class="on" data-u>°C</button><button data-u>°F</button></div></div>${tab('Settings')}`,
+About:`${sb}${back('About the App','Settings')}<div class="body center"><div style="margin-top:24px">${logo}</div><h2>Smart Fish Drying</h2><div class="sub">Version 1.0</div><div class="sub" style="font-size:13px">Helps fisherfolk in Barangay Pasil track drying conditions, predict drying status, and protect their catch from rain.</div></div>${tab('Settings')}`,
+Guide:`${sb}${back('Drying Guide','AI Prediction')}<div class="body"><div class="card" style="background:var(--gbg);border-color:transparent"><b style="color:var(--green);font-size:13px">Ideal drying conditions</b><div class="sub" style="margin-top:6px">Warm, dry air, steady airflow, and no rain.</div></div><div class="row"><b style="font-size:14px">Daily checklist</b><span class="chip" id="gc">0 of 5 done</span></div>${ck('Spread fish in a single layer on clean racks')}${ck('Turn the fish every few hours')}${ck('Keep the protective cover ready for rain')}${ck('Check Live Data for humidity and rain')}${ck('Test dryness: firm to the touch, not sticky')}<div class="sub">General tips only. Follow your local fisheries office’s guidance.</div><button class="btn o" data-go="AI Prediction" style="margin-top:auto">Back to prediction</button></div>${tab('Home')}`,
+Help:`${sb}${back('Help & Support','Settings')}<div class="body">${fq('Why does it say “Partially Dry”?','The AI estimates dryness from temperature, humidity, and weather.')}${fq('What should I do when rain is detected?','Cover the fish or activate the protective cover.')}${fq('The device shows Disconnected.','Check the sensor’s power and Wi-Fi, then tap Sync now in Device Settings.')}<button class="btn" data-save="Message sent to support" style="margin-top:auto">Send us a message</button></div>${tab('Settings')}`};
+const ph=document.getElementById('phone'),pl=document.getElementById('pills');
+Object.assign(S,SUB);ph.innerHTML=[...N,...Object.keys(SUB)].map(n=>`<section class="screen" data-s="${n}">${S[n]}</section>`).join('');
+pl.innerHTML=N.map(n=>`<button data-go="${n}">${n}</button>`).join('');
+function go(n){ph.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.dataset.s==n));pl.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.go==n))}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-go]');if(t)go(t.dataset.go);const r=e.target.closest('#rng button');if(r){r.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b==r))}});
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;ph.appendChild(t);setTimeout(()=>t.remove(),1800)}
+document.addEventListener('click',e=>{
+const w=e.target.closest('.sw');if(w)w.classList.toggle('on');
+const sv=e.target.closest('[data-save]');if(sv){toast(sv.dataset.save);go('Settings')}
+const c=e.target.closest('.ck');if(c){c.classList.toggle('done');document.getElementById('gc').textContent=document.querySelectorAll('.ck.done').length+' of '+document.querySelectorAll('.ck').length+' done'}
+const q=e.target.closest('.faq');if(q)q.classList.toggle('open');
+if(e.target.closest('#sync')){document.getElementById('ls').textContent='Just now';toast('Device synced')}
+const u=e.target.closest('[data-u]');if(u)u.parentNode.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b==u));
+});
+go('Splash');
+</script>
+</body>
+</html>
